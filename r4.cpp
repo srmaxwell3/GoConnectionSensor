@@ -78,7 +78,7 @@ public:
 
 	      // ... and remember, the lines in each touched intersection.
 
-	      for (auto l = line->cbegin(); l != line->cend(); l += 1) {
+	      for (auto l = line->cbegin(); l != line->cend(); ++l) {
 		(*this)[*l].insert(lineId);
 	      }
 	    }
@@ -89,21 +89,46 @@ public:
   }
 
   void put(LocationRC l, State s) {
+    fprintf(stdout, "Board::put(l=");
+    l.fprint(stdout);
+    fprintf(stdout, ", s=%s) ", s == Black ? "Black" : (s == White) ? "White" : "Empty");
+    fflush(stdout);
+
+    char const *comma1 = "{";
+
     if ((*this)[l].is(Empty)) {
-      Intersection<NRows, NCols> &p = (*this)[size_t(l)];
+      IntersectionRC &p = (*this)[size_t(l)];
 
       p.put(s);
 
-      for (auto lId = p.begin(); lId != p.end(); lId++) {
-	if (l != lId->src && l != lId->dst) {
-	  auto line = allLines[*lId];
+      for (auto lineId : p) {
+	fprintf(stdout, "%s ", comma1);
+	lineId.fprint(stdout);
+	fflush(stdout);
+	comma1 = ",";
 
-	  for (auto l = line->cbegin(); l != line->cend(); l += 1) {
-	    (*this)[size_t(*l)].erase(*lId);
+	if (l != lineId.src && l != lineId.dst) {
+	  auto &line = allLines[lineId];
+
+	  char const *comma2 = " {";
+	  for (auto const &l : *line) {
+	    fprintf(stdout, "%s ", comma2);
+	    l.fprint(stdout);
+	    fflush(stdout);
+	    comma2 = ",";
+
+	    (*this)[l].erase(lineId);
 	  }
+	  fprintf(stdout, " }");
+	  fflush(stdout);
 	}
       }
+
+      fprintf(stdout, " }");
+      fflush(stdout);
     }
+    fprintf(stdout, "\n");
+    fflush(stdout);
   }
 
   ~Board() {
@@ -115,15 +140,15 @@ public:
   void fprint(FILE *out) const {
     fprintf(stdout, " ");
     for (size_t j = 0; j < NCols; j += 1) {
-      fprintf(stdout, "      %c", char(j + 'a'));
+      fprintf(stdout, "       %c", char(j + 'a'));
     }
     fprintf(stdout, "\n");
     for (size_t i = 0; i < NRows; i += 1) {
       fprintf(stdout, "%c", char(i + 'a'));
 
       for (size_t j = 0; j < NCols; j += 1) {
-	BoardLocation<NRows, NCols> l(i, j);
-	Intersection<NRows, NCols> const &p = (*this)[size_t(l)];
+	LocationRC l(i, j);
+	IntersectionRC const &p = (*this)[size_t(l)];
 
 	fprintf(stdout,
 		" %5lu %c",
@@ -133,15 +158,41 @@ public:
       }
       fprintf(stdout, "\n");
     }
+    for (size_t i = 0; i < NRows; i += 1) {
+      for (size_t j = 0; j < NCols; j += 1) {
+	LocationRC l(i, j);
+	IntersectionRC const &p = (*this)[size_t(l)];
+
+	fprintf(stdout, "Board[");
+	l.fprint(stdout);
+	fprintf(stdout, "] = { state=%s, { ", p.is(Black) ? "Black" : (p.is(White) ? "White" : "Empty"));
+	auto lineId = p.cbegin();
+	if (lineId != p.cend()) {
+	  lineId->fprint(stdout);
+	  for (++lineId; lineId != p.cend(); ++lineId) {
+	    fprintf(stdout, ", ");
+	    lineId->fprint(stdout);
+	  }
+	}
+	fprintf(stdout, " }\n");
+      }
+      fprintf(stdout, "\n");
+    }
   }
 
 private:
   map<LineIdRC, LineRC const *> allLines;
 };
 
+typedef Board<NRows, NCols> BoardRC;
+typedef BoardLocation<NRows, NCols> LocationRC;
+typedef LineId<NRows, NCols> LineIdRC;
+typedef Line<NRows, NCols> LineRC;
+typedef Intersection<NRows, NCols> IntersectionRC;
+
 int main(int argc, char const *argv[])
 {
-  Board<NRows, NCols> board;
+  BoardRC board;
 
   board.fprint(stdout);
 
@@ -157,10 +208,18 @@ int main(int argc, char const *argv[])
       n = (r / NRows) % NCols;
     }
 
-    board.put(BoardLocation<NRows, NCols>(m, n), who);
-    who = who == Black ? White : Black;
+    LocationRC p(m, n);
+
+    fprintf(stdout, "%lu: ", i);
+    p.fprint(stdout);
+    fprintf(stdout, " <- %s\n", who == Black ? "Black" : "White");
+
+    board.put(p, who);
 
     board.fprint(stdout);
+    fprintf(stdout, "\n");
+
+    who = who == Black ? White : Black;
   }
 
   return 0;
