@@ -24,7 +24,7 @@ public:
     if (M <= m) {
       throw out_of_range("rarray<T, N, M>::at(n, m): M <= m");
     }
-    return this->at(indexFrom(n, m));
+    return array<T, N * M>::at(indexFrom(n, m));
   }
 
   const_reference at(size_type n, size_type m) const {
@@ -34,7 +34,7 @@ public:
     if (M <= m) {
       throw out_of_range("rarray<T, N, M>::at(n, m): M <= m");
     }
-    return this->at(indexFrom(n, m));
+    return array<T, N * M>::at(indexFrom(n, m));
   }
 
   const_reference operator()(size_type row, size_type col) const {
