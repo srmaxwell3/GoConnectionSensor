@@ -1,10 +1,10 @@
 #ifndef LINEID_H
 #define LINEID_H
 
-#include "location.h"
+#include "boardlocation.h"
 
 template <size_t NRows, size_t NCols> struct LineId {
-  typedef Location<NRows, NCols> LocationRC;
+  typedef BoardLocation<NRows, NCols> LocationRC;
   typedef LineId<NRows, NCols> LineIdRC;
 
   LineId() : src (), dst () { }
