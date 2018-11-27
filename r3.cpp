@@ -33,8 +33,8 @@ int main(int argc, char const *argv[])
     for (size_t j = 0; j < NCols; j += 1) {
       BoardLocationRxC src(i, j);
 
-      // for (int di = -18; di <= 18; di += 1) {	
-      // 	for (int dj = -18; dj <= 18; dj += 1) {	
+      // for (int di = -18; di <= 18; di += 1) {
+      // 	for (int dj = -18; dj <= 18; dj += 1) {
       // 	  allLines.insert(Line<NRows, NCols>(src, di, dj));
       // 	}
       // }
@@ -42,7 +42,7 @@ int main(int argc, char const *argv[])
       for (size_t ii = 0; ii < NRows; ii += 1) {
       	for (size_t jj = 0; jj < NCols; jj += 1) {
       	  BoardLocationRxC dst(ii, jj);
-      
+
       	  if (src != dst) {
 	    LineIdRxC lineId(src, dst);
       	    allLines[lineId] = LineRxC(lineId);
@@ -73,7 +73,7 @@ int main(int argc, char const *argv[])
     for (size_t j = 0; j < NCols; j += 1) {
       BoardLocationRxC location(i, j);
 
-      fprintf(stdout, " %5d", board[size_t(location)].size());
+      fprintf(stdout, " %5lu", board[size_t(location)].size());
     }
     fprintf(stdout, "\n");
   }
@@ -103,7 +103,7 @@ int main(int argc, char const *argv[])
       for (size_t j = 0; j < NCols; j += 1) {
 	BoardLocationRxC location(i, j);
 
-	fprintf(stdout, " %5d", board[size_t(location)].size());
+	fprintf(stdout, " %5lu", board[size_t(location)].size());
       }
       fprintf(stdout, "\n");
     }

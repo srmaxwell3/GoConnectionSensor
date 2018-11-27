@@ -189,7 +189,7 @@ struct NeighborhoodCounts: PArray<size_t> {
     std::fill(begin(), end(), 0);
   }
   void fprint(FILE *out) const {
-    fprintf(out, "%u%u%u%u", (*this)[Illegal], (*this)[Empty], (*this)[Black], (*this)[White]);
+    fprintf(out, "%lu%lu%lu%lu", (*this)[Illegal], (*this)[Empty], (*this)[Black], (*this)[White]);
   }
 };
 
@@ -278,9 +278,9 @@ public:
     fprintf(out, "{");
     auto p = cbegin();
     if (p != cend()) {
-      fprintf(out, " %c%c", 'a' + p->first, 'a' + p->second);
+      fprintf(out, " %c%c", char('a' + p->first), char('a' + p->second));
       while (++p != cend()) {
-	fprintf(out, ", %c%c", 'a' + p->first, 'a' + p->second);
+	fprintf(out, ", %c%c", char('a' + p->first), char('a' + p->second));
       }
     }
     fprintf(out, " }");
@@ -350,7 +350,7 @@ public:
   void fprint(FILE *out) const {
     fprintf(out, "Groups = {\n");
     for (Point p = Illegal; p < EoPoint; p = Point(size_t(p) + 1)) {
-      fprintf(out, "  [%u] {\n", p);
+      fprintf(out, "  [%d] {\n", p);
       for (auto g = (*this)[p].begin(); g != (*this)[p].end(); g++) {
 	fprintf(out, "    ");
 	(*g)->fprint(out);
