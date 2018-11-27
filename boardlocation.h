@@ -24,7 +24,7 @@ public:
   bool isOnAnEdge() const {
     size_t r = row();
     size_t c = col();
-    return !(0 < row && row < (NRows - 1) && 0 < col && col < (NCols - 1));
+    return !(0 < row() && row() < (NRows - 1) && 0 < col() && col() < (NCols - 1));
   }
   bool isOnAnEdgeToThe(Direction const &d) const {
     size_t r = row();
@@ -38,10 +38,12 @@ public:
     case SW: return !(r < (NRows - 1) && 0 < c);
     case W: return !(0 < c);
     case NW: return !(0 < r && 0 < c);
+    case EoDirection:
+      return false;
     }
   }
   BoardLocation locationToThe(Direction const &d) const {
-    return BoardLocation(offset + !isOnAnEdgeToThe(d) ? offsetToThe(d) : 0);
+    return BoardLocation(offset + (!isOnAnEdgeToThe(d) ? offsetToThe(d) : 0));
   }
   bool operator==(BoardLocation const &that) const { return offset == that.offset; }
   bool operator<(BoardLocation const &that) const { return offset < that.offset; }

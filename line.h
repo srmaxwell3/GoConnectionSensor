@@ -10,6 +10,7 @@ using std::vector;
 #include "lineid.h"
 
 template <size_t NRows, size_t NCols> struct Line: public vector<BoardLocation<NRows, NCols>> {
+  typedef vector<BoardLocation<NRows, NCols>> VectorOfLocationRC;
   typedef BoardLocation<NRows, NCols> LocationRC;
   typedef LineId<NRows, NCols> LineIdRC;
   typedef Line<NRows, NCols> LineRC;
@@ -96,9 +97,9 @@ template <size_t NRows, size_t NCols> struct Line: public vector<BoardLocation<N
     int sy = y0 < y1 ? +1 : -1;
     int err = dx - dy;
 
-    for (push_back(LocationRC(x0, y0));
+    for (VectorOfLocationRC::push_back(LocationRC(x0, y0));
   	 !(x0 == x1 && y0 == y1);
-  	 push_back(LocationRC(x0, y0))
+  	 VectorOfLocationRC::push_back(LocationRC(x0, y0))
   	)
     {
       int e2 = 2 * err;

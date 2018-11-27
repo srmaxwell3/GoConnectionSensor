@@ -45,7 +45,7 @@ public:
   bool isOnAnEdge() const {
     size_t r = row();
     size_t c = col();
-    return !(0 < row && row < (NRows - 1) && 0 < col && col < (NCols - 1));
+    return !(0 < row() && row() < (NRows - 1) && 0 < col() && col() < (NCols - 1));
   }
   bool isOnAnEdgeToThe(Direction const &d) const {
     size_t r = row();
@@ -59,10 +59,12 @@ public:
     case SW: return !(r < (NRows - 1) && 0 < c);
     case W: return !(0 < c);
     case NW: return !(0 < r && 0 < c);
+    case EoDirection:
+      return false;
     }
   }
   BoardLocation locationToThe(Direction const &d) const {
-    return BoardLocation(offset + !isOnAnEdgeToThe(d) ? offsetToThe(d) : 0);
+    return BoardLocation(offset + (!isOnAnEdgeToThe(d) ? offsetToThe(d) : 0));
   }
   bool operator==(BoardLocation const &that) const { return offset == that.offset; }
   bool operator<(BoardLocation const &that) const { return offset < that.offset; }
@@ -118,6 +120,8 @@ private:
 };
 
 template <size_t NRows, size_t NCols> struct Line: public vector<BoardLocation<NRows, NCols>> {
+  typedef vector<BoardLocation<NRows, NCols>> VectorOfBoardLocations;
+
   // Line(BoardLocation<NRows, NCols> _src, int x1, int y1) :
   //   src (_src),
   //   dst (_src),
@@ -199,9 +203,9 @@ template <size_t NRows, size_t NCols> struct Line: public vector<BoardLocation<N
     int sy = y0 < y1 ? +1 : -1;
     int err = dx - dy;
   
-    for (push_back(BoardLocation<NRows, NCols>(x0, y0));
+    for (VectorOfBoardLocations::push_back(BoardLocation<NRows, NCols>(x0, y0));
   	 !(x0 == x1 && y0 == y1);
-  	 push_back(BoardLocation<NRows, NCols>(x0, y0))
+  	 VectorOfBoardLocations::push_back(BoardLocation<NRows, NCols>(x0, y0))
   	)
     {
       int e2 = 2 * err;
